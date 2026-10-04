@@ -1,5 +1,5 @@
 {
-  "title": "English Sentences - Demo",
+  "title": "Odkrywanie liter - Klasa 5A",
   "settings": {
     "difficulty": "medium",
     "spawnRate": 900,
@@ -12,10 +12,10 @@
     "soundEnabled": true
   },
   "sentences": [
-    "Wczoraj przeczytałem bardzo ciekawą książkę o przygodach w dżungli.",
-    "Gdy wróciliśmy ze szkoły, mama przygotowała pyszny obiad.",
-    "Nasza klasa chętnie bierze udział w szkolnych konkursach i zawodach sportowych.",
-    "Dlaczego dzisiaj nie wziąłeś do szkoły zeszytu do języka polskiego?",
-    "W słoneczny jesienny dzień wybraliśmy się na długi spacer po parku."
+    "Zażółć gęślą jaźń",
+    "Pójdę jutro do szkoły",
+    "Mój żółw lubi śliwki",
+    "I like learning English",
+    "She goes to school every day"
   ]
 }
