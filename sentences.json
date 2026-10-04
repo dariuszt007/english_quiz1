@@ -1,18 +1,45 @@
 {
-  "title": "Odkrywanie liter - Demo",
+  "title": "Odkrywanie liter - Szkoła",
   "settings": {
     "difficulty": "medium",
     "spawnRate": 900,
-    "timerSeconds": 0,
+    "timerSeconds": 45,
     "maxMistakes": 5,
     "randomOrder": false,
+    "autoNextSeconds": 3,
+    "soundEnabled": true,
     "allowHint": true,
     "allowSolution": false,
-    "autoNextSeconds": 3,
-    "soundEnabled": true
+    "studentNameMode": true,
+    "showSetPicker": true
   },
-  "sentences": [
-    "Ide ood ddo naa.",
-    "AAkk kaka apa."
+  "sets": [
+    {
+      "id": "class5a",
+      "name": "Klasa 5A",
+      "sentences": [
+        "Zażółć gęślą jaźń",
+        "Pójdę jutro do szkoły",
+        "Mój żółw lubi śliwki"
+      ]
+    },
+    {
+      "id": "english_basic",
+      "name": "English Basic",
+      "sentences": [
+        "I like apples",
+        "She is my best friend",
+        "We go to school every day"
+      ]
+    },
+    {
+      "id": "school_daily",
+      "name": "Szkoła i codzienność",
+      "sentences": [
+        "Mam dziś matematykę",
+        "Po lekcjach idę do domu",
+        "My teacher is very kind"
+      ]
+    }
   ]
 }
