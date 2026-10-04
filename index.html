@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gra dla studentów v3</title>
+  <title>Gra dla studentów v3.1</title>
   <style>
     :root{
       --bg:#0f172a;
@@ -314,9 +314,9 @@
       <div class="card">
         <h2>Instrukcja</h2>
         <div class="small">
-          Klikaj litery, które pasują do zdania.  
-          Litery wybieraj po kolei.  
-          Gra może mieć timer, limit błędów, podpowiedź i raport końcowy.
+          Klikaj litery, które występują w zdaniu.  
+          Po kliknięciu poprawnej litery odkryją się wszystkie takie same litery w całym zdaniu.  
+          Gra obsługuje polskie litery: ą ć ę ł ń ó ś ź ż.
         </div>
       </div>
 
@@ -353,7 +353,7 @@
       <div class="card">
         <h2>Budowane zdanie</h2>
         <div class="progress" id="progressDisplay"></div>
-        <div class="small">Spacje są dodawane automatycznie.</div>
+        <div class="small">Spacje i znaki interpunkcyjne są odkrywane automatycznie.</div>
         <div class="summary-box small" id="sentenceSummary">
           Oczekiwanie na rozpoczęcie gry...
         </div>
@@ -363,7 +363,7 @@
         <h2>Punkty</h2>
         <div class="score">
           <div class="score-box">
-            Poprawne
+            Odkryte litery
             <strong id="correctCount">0</strong>
           </div>
           <div class="score-box">
@@ -390,7 +390,7 @@
 
       <div class="report-grid">
         <div class="report-box">
-          Poprawne kliknięcia
+          Odkryte litery
           <strong id="reportCorrect">0</strong>
         </div>
         <div class="report-box">
@@ -418,7 +418,7 @@
 
   <script>
     const fallbackData = {
-      title: "English Sentence Builder",
+      title: "Odkrywanie liter",
       settings: {
         difficulty: "medium",
         spawnRate: 900,
@@ -431,11 +431,13 @@
         soundEnabled: true
       },
       sentences: [
-        "I like learning English",
-        "She goes to school every day",
-        "We are reading a good book"
+        "Zażółć gęślą jaźń",
+        "Pójdę jutro do szkoły",
+        "Mój żółw lubi śliwki"
       ]
     };
+
+    const POLISH_LETTERS = "aąbcćdeęfghijklłmnńoópqrsśtuvwxyzźż";
 
     const gameArea = document.getElementById("gameArea");
     const progressDisplay = document.getElementById("progressDisplay");
@@ -477,7 +479,6 @@
     let order = [];
     let currentOrderIndex = 0;
     let currentSentence = "";
-    let currentPosition = 0;
     let letters = [];
     let animationId = null;
     let spawnInterval = null;
@@ -487,10 +488,12 @@
     let sentenceMistakes = 0;
     let remainingTime = 0;
     let timerInterval = null;
-    let hintIndex = -1;
     let loadedFromFile = false;
     let completedSentencesCount = 0;
     let autoNextTimeout = null;
+    let revealedIndexes = [];
+    let revealedChars = new Set();
+    let hintIndex = -1;
 
     let correctCount = 0;
     let wrongCount = 0;
@@ -555,7 +558,11 @@
     }
 
     function normalizeChar(char){
-      return char.toLowerCase();
+      return String(char).toLocaleLowerCase("pl-PL");
+    }
+
+    function isLetter(char){
+      return /[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/.test(char);
     }
 
     function escapeHtml(text){
@@ -605,10 +612,67 @@
       }
     }
 
-    function skipSpaces(){
-      while(currentPosition < currentSentence.length && currentSentence[currentPosition] === " "){
-        currentPosition++;
+    function getHiddenLetterIndexes(){
+      const result = [];
+      for(let i = 0; i < currentSentence.length; i++){
+        const ch = currentSentence[i];
+        if(isLetter(ch) && !revealedIndexes[i]){
+          result.push(i);
+        }
       }
+      return result;
+    }
+
+    function getRevealedLettersCount(){
+      let count = 0;
+      for(let i = 0; i < currentSentence.length; i++){
+        if(isLetter(currentSentence[i]) && revealedIndexes[i]){
+          count++;
+        }
+      }
+      return count;
+    }
+
+    function revealAllOccurrences(clickedChar){
+      const normalizedClicked = normalizeChar(clickedChar);
+      let found = 0;
+
+      for(let i = 0; i < currentSentence.length; i++){
+        const currentChar = currentSentence[i];
+        if(
+          isLetter(currentChar) &&
+          normalizeChar(currentChar) === normalizedClicked &&
+          !revealedIndexes[i]
+        ){
+          revealedIndexes[i] = true;
+          found++;
+        }
+      }
+
+      if(found > 0){
+        revealedChars.add(normalizedClicked);
+      }
+
+      hintIndex = -1;
+      return found;
+    }
+
+    function sentenceContainsChar(clickedChar){
+      const normalizedClicked = normalizeChar(clickedChar);
+
+      for(let i = 0; i < currentSentence.length; i++){
+        if(
+          isLetter(currentSentence[i]) &&
+          normalizeChar(currentSentence[i]) === normalizedClicked
+        ){
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function isSentenceCompleted(){
+      return getHiddenLetterIndexes().length === 0;
     }
 
     function renderProgress(){
@@ -619,7 +683,9 @@
 
         if(ch === " "){
           html += '<span class="space-char"></span>';
-        } else if(i < currentPosition){
+        } else if(!isLetter(ch)){
+          html += `<span class="correct-char">${escapeHtml(ch)}</span>`;
+        } else if(revealedIndexes[i]){
           html += `<span class="correct-char">${escapeHtml(ch)}</span>`;
         } else if(i === hintIndex){
           html += `<span class="hint-char">${escapeHtml(ch)}</span>`;
@@ -630,15 +696,15 @@
 
       progressDisplay.innerHTML = html;
 
-      const allLetters = currentSentence.replace(/\s/g, "").length;
-      const doneLetters = currentSentence.slice(0, currentPosition).replace(/\s/g, "").length;
+      const allLetters = currentSentence.split("").filter(ch => isLetter(ch)).length;
+      const doneLetters = getRevealedLettersCount();
       const percent = allLetters === 0 ? 100 : Math.round((doneLetters / allLetters) * 100);
 
       statusLine.textContent = "Postęp: " + percent + "%";
       sentenceNumber.textContent = "Zdanie " + (currentOrderIndex + 1) + " z " + sentences.length;
       sentenceSummary.textContent =
         "Długość zdania: " + currentSentence.length +
-        " znaków | Ukończono: " + doneLetters + " liter | Pozostało: " + (allLetters - doneLetters) + " liter";
+        " znaków | Odkryto: " + doneLetters + " liter | Pozostało: " + (allLetters - doneLetters) + " liter";
     }
 
     function createLetterElement(letterObj){
@@ -653,18 +719,25 @@
       letterObj.element = el;
     }
 
+    function getAvailableLettersFromSentence(){
+      const unique = new Set();
+      for(const ch of currentSentence){
+        if(isLetter(ch)){
+          unique.add(normalizeChar(ch));
+        }
+      }
+      return Array.from(unique);
+    }
+
     function spawnLetter(){
       if(gameFinished || paused) return;
 
-      skipSpaces();
-
-      const charsPool = "abcdefghijklmnopqrstuvwxyz";
-      const expected = currentSentence[currentPosition];
-      const useCorrect = Math.random() < getCorrectLetterChance() && expected && expected !== " ";
+      const expectedPool = getAvailableLettersFromSentence();
+      const useCorrect = Math.random() < getCorrectLetterChance() && expectedPool.length > 0;
 
       const char = useCorrect
-        ? normalizeChar(expected)
-        : charsPool[Math.floor(Math.random() * charsPool.length)];
+        ? expectedPool[Math.floor(Math.random() * expectedPool.length)]
+        : POLISH_LETTERS[Math.floor(Math.random() * POLISH_LETTERS.length)];
 
       const width = gameArea.clientWidth;
       const x = Math.max(0, Math.floor(Math.random() * (width - 58)));
@@ -711,32 +784,39 @@
       const letter = letters.find(l => l.id === id);
       if(!letter) return;
 
-      skipSpaces();
-      const expected = currentSentence[currentPosition];
+      const clickedChar = letter.char;
+      removeLetter(id);
 
-      if(expected && normalizeChar(letter.char) === normalizeChar(expected)){
-        correctCount++;
+      if(sentenceContainsChar(clickedChar) && !revealedChars.has(normalizeChar(clickedChar))){
+        const foundCount = revealAllOccurrences(clickedChar);
+        correctCount += foundCount;
         playCorrectSound();
-        removeLetter(id);
-        currentPosition++;
-        hintIndex = -1;
-        skipSpaces();
         renderProgress();
         updateScore();
 
-        if(currentPosition >= currentSentence.length){
+        if(isSentenceCompleted()){
           finishSentence(true);
         } else {
-          setMessage("Dobrze! Poprawna litera.", "ok");
+          setMessage("Dobrze! Odkryto wszystkie litery: " + clickedChar.toUpperCase(), "ok");
+        }
+      } else if(sentenceContainsChar(clickedChar) && revealedChars.has(normalizeChar(clickedChar))){
+        wrongCount++;
+        sentenceMistakes++;
+        playWrongSound();
+        updateScore();
+        updateTopInfo();
+        setMessage("Ta litera została już wcześniej odkryta.", "err");
+
+        if(config.settings.maxMistakes > 0 && sentenceMistakes >= config.settings.maxMistakes){
+          finishSentence(false, "Przekroczono limit błędów.");
         }
       } else {
         wrongCount++;
         sentenceMistakes++;
         playWrongSound();
-        removeLetter(id);
         updateScore();
         updateTopInfo();
-        setMessage("Błąd! Ta litera nie pasuje do aktualnego miejsca w zdaniu.", "err");
+        setMessage("Błąd! Tej litery nie ma w zdaniu.", "err");
 
         if(config.settings.maxMistakes > 0 && sentenceMistakes >= config.settings.maxMistakes){
           finishSentence(false, "Przekroczono limit błędów.");
@@ -821,7 +901,7 @@
         finishedCount++;
         completedSentencesCount++;
         updateScore();
-        setMessage("Brawo! Udało się ułożyć całe zdanie.", "ok");
+        setMessage("Brawo! Udało się odkryć całe zdanie.", "ok");
         playFinishSound();
       } else {
         completedSentencesCount++;
@@ -853,10 +933,19 @@
       currentOrderIndex = orderIndex;
       const actualSentenceIndex = order[currentOrderIndex];
       currentSentence = sentences[actualSentenceIndex] || fallbackData.sentences[0];
-      currentPosition = 0;
+
+      revealedIndexes = new Array(currentSentence.length).fill(false);
+      revealedChars = new Set();
+      hintIndex = -1;
+
+      for(let i = 0; i < currentSentence.length; i++){
+        if(currentSentence[i] === " " || !isLetter(currentSentence[i])){
+          revealedIndexes[i] = true;
+        }
+      }
+
       gameFinished = false;
       paused = false;
-      hintIndex = -1;
       sentenceMistakes = 0;
       remainingTime = config.settings.timerSeconds;
       toggleBtn.textContent = "Pauza";
@@ -864,10 +953,9 @@
       hintBtn.style.display = config.settings.allowHint ? "inline-block" : "none";
       solutionBtn.style.display = config.settings.allowSolution ? "inline-block" : "none";
 
-      skipSpaces();
       renderProgress();
       updateTopInfo();
-      setMessage("Kliknij poprawną literę.", "info");
+      setMessage("Kliknij literę, która występuje w zdaniu.", "info");
       startLoops();
     }
 
@@ -890,10 +978,15 @@
         return;
       }
 
-      skipSpaces();
-      hintIndex = currentPosition;
+      const hiddenIndexes = getHiddenLetterIndexes();
+      if(hiddenIndexes.length === 0){
+        setMessage("Wszystkie litery są już odkryte.", "warn");
+        return;
+      }
+
+      hintIndex = hiddenIndexes[0];
       renderProgress();
-      setMessage("Podpowiedź pokazuje następną literę.", "warn");
+      setMessage("Podpowiedź pokazuje jedną z ukrytych liter.", "warn");
     }
 
     function showSolution(){
@@ -902,13 +995,11 @@
         return;
       }
 
-      progressDisplay.innerHTML = currentSentence
-        .split("")
-        .map(ch => ch === " "
-          ? '<span class="space-char"></span>'
-          : `<span class="correct-char">${escapeHtml(ch)}</span>`)
-        .join("");
+      for(let i = 0; i < currentSentence.length; i++){
+        revealedIndexes[i] = true;
+      }
 
+      renderProgress();
       finishSentence(false, "Pokazano rozwiązanie.");
     }
 
