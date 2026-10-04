@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>teacher.html - Panel nauczyciela v3</title>
+  <title>teacher.html - Panel nauczyciela v3.1</title>
   <style>
     :root{
       --bg:#0f172a;
@@ -154,14 +154,22 @@
       margin-right:8px;
       margin-bottom:8px;
     }
+    .note{
+      margin-top:12px;
+      padding:12px;
+      border-radius:12px;
+      background:rgba(245,158,11,.10);
+      border:1px solid rgba(245,158,11,.20);
+      color:#fde68a;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="topbar">
       <div>
-        <div class="title">Panel nauczyciela v3</div>
-        <div class="small">Wersja szkolna z raportem wyników, automatycznym przejściem, pełnym ekranem i dźwiękami.</div>
+        <div class="title">Panel nauczyciela v3.1</div>
+        <div class="small">Tryb: po kliknięciu poprawnej litery odkrywają się wszystkie takie litery w zdaniu. Obsługa polskich znaków.</div>
       </div>
       <a href="index.html">Otwórz grę studenta</a>
     </div>
@@ -171,14 +179,19 @@
         <h2>1. Zdania</h2>
         <label for="sentencesInput">Jedno zdanie w jednej linii</label>
         <textarea id="sentencesInput" placeholder="Np.
-I like learning English
-She goes to school every day
-We are reading a good book"></textarea>
+Zażółć gęślą jaźń
+Pójdę jutro do szkoły
+I like learning English"></textarea>
+
+        <div class="note small">
+          W tej wersji uczeń nie układa zdania po kolei.  
+          Kliknięcie poprawnej litery odsłania wszystkie takie same litery w całym zdaniu.
+        </div>
 
         <div class="row">
           <div>
             <label for="gameTitle">Tytuł gry</label>
-            <input id="gameTitle" type="text" placeholder="Np. English Sentences - Class 5A" />
+            <input id="gameTitle" type="text" placeholder="Np. Odkrywanie liter - Klasa 5A" />
           </div>
           <div>
             <label for="difficulty">Poziom trudności</label>
@@ -283,12 +296,11 @@ We are reading a good book"></textarea>
         <h2>2. Podgląd</h2>
         <div id="stats" class="small">Liczba zdań: 0</div>
         <div style="margin-top:10px;">
+          <span class="pill">Polskie litery</span>
+          <span class="pill">Odkrywanie wszystkich takich samych liter</span>
           <span class="pill">Raport końcowy</span>
-          <span class="pill">Auto next</span>
-          <span class="pill">Fullscreen</span>
           <span class="pill">Dźwięki</span>
           <span class="pill">Timer</span>
-          <span class="pill">Import/Export</span>
         </div>
         <div id="previewList" class="preview-list"></div>
       </div>
@@ -327,12 +339,11 @@ We are reading a good book"></textarea>
     const stats = document.getElementById("stats");
 
     const demoSentences = [
+      "Zażółć gęślą jaźń",
+      "Pójdę jutro do szkoły",
+      "Mój żółw lubi śliwki",
       "I like learning English",
-      "She goes to school every day",
-      "We are reading a good book",
-      "They play football after class",
-      "My friend is very helpful",
-      "This lesson is easy and fun"
+      "She goes to school every day"
     ];
 
     function setMessage(text, type = "info"){
@@ -378,7 +389,7 @@ We are reading a good book"></textarea>
       }
 
       const data = {
-        title: gameTitle.value.trim() || "English Sentence Builder",
+        title: gameTitle.value.trim() || "Odkrywanie liter",
         settings: {
           difficulty: difficulty.value,
           spawnRate: Number(spawnRate.value),
@@ -400,7 +411,7 @@ We are reading a good book"></textarea>
     }
 
     function fillFormFromData(data){
-      const safeTitle = typeof data.title === "string" ? data.title : "English Sentence Builder";
+      const safeTitle = typeof data.title === "string" ? data.title : "Odkrywanie liter";
       const safeSettings = data.settings || {};
       const safeSentences = Array.isArray(data.sentences) ? data.sentences : [];
 
@@ -500,7 +511,7 @@ We are reading a good book"></textarea>
 
     demoBtn.addEventListener("click", () => {
       const data = {
-        title: "English Sentences - Demo",
+        title: "Odkrywanie liter - Demo",
         settings: {
           difficulty: "medium",
           spawnRate: 900,
