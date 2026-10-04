@@ -1,9 +1,9 @@
 {
-  "title": "Odkrywanie liter - Klasa 5A",
+  "title": "Odkrywanie liter - Demo",
   "settings": {
     "difficulty": "medium",
     "spawnRate": 900,
-    "timerSeconds": 45,
+    "timerSeconds": 0,
     "maxMistakes": 5,
     "randomOrder": false,
     "allowHint": true,
@@ -12,10 +12,7 @@
     "soundEnabled": true
   },
   "sentences": [
-    "Zażółć gęślą jaźń",
-    "Pójdę jutro do szkoły",
-    "Mój żółw lubi śliwki",
-    "I like learning English",
-    "She goes to school every day"
+    "Ide ood ddo naa.",
+    "AAkk kaka apa."
   ]
 }
