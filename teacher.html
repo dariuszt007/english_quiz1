@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>teacher.html - Panel nauczyciela v3</title>
+  <style>
+    :root{
+      --bg:#0f172a;
+      --panel:#111827;
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --accent:#38bdf8;
+      --success:#22c55e;
+      --danger:#ef4444;
+      --warning:#f59e0b;
+      --border:rgba(148,163,184,.18);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial,sans-serif;
+      background:linear-gradient(180deg,#0f172a 0%,#111827 100%);
+      color:var(--text);
+      min-height:100vh;
+    }
+    .container{
+      max-width:1200px;
+      margin:0 auto;
+      padding:20px;
+    }
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+    .title{
+      font-size:30px;
+      font-weight:bold;
+    }
+    .topbar a{
+      text-decoration:none;
+      color:white;
+      background:var(--accent);
+      padding:10px 14px;
+      border-radius:10px;
+      font-weight:bold;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+    }
+    @media (min-width:980px){
+      .grid{
+        grid-template-columns:1.15fr .85fr;
+      }
+    }
+    .card{
+      background:rgba(17,24,39,.94);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:16px;
+      box-shadow:0 8px 20px rgba(0,0,0,.24);
+    }
+    h1,h2,h3{margin-top:0}
+    label{
+      display:block;
+      margin-bottom:8px;
+      font-weight:bold;
+    }
+    textarea, input, select{
+      width:100%;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:#0b1220;
+      color:var(--text);
+      padding:12px;
+      font-size:15px;
+    }
+    textarea{
+      min-height:260px;
+      resize:vertical;
+      line-height:1.5;
+    }
+    .row{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+      margin-top:12px;
+    }
+    @media (min-width:700px){
+      .row{
+        grid-template-columns:1fr 1fr;
+      }
+    }
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
+    }
+    button{
+      border:none;
+      border-radius:10px;
+      padding:10px 14px;
+      font-size:14px;
+      font-weight:bold;
+      cursor:pointer;
+    }
+    .primary{background:var(--accent); color:#08111f;}
+    .success{background:var(--success); color:#04130a;}
+    .danger{background:var(--danger); color:white;}
+    .secondary{background:#334155; color:white;}
+    .warning{background:var(--warning); color:#111827;}
+    .message{
+      margin-top:14px;
+      min-height:24px;
+      font-weight:bold;
+    }
+    .ok{color:var(--success)}
+    .err{color:var(--danger)}
+    .info{color:var(--accent)}
+    .small{
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.6;
+    }
+    .sentence-item{
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:10px;
+      padding:10px 12px;
+      margin-bottom:10px;
+    }
+    .preview-list{
+      margin-top:12px;
+    }
+    .json-output{
+      min-height:240px;
+      font-family:Consolas, monospace;
+    }
+    .pill{
+      display:inline-block;
+      background:rgba(56,189,248,.12);
+      color:#bae6fd;
+      border:1px solid rgba(56,189,248,.25);
+      border-radius:999px;
+      padding:4px 10px;
+      font-size:12px;
+      margin-right:8px;
+      margin-bottom:8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div>
+        <div class="title">Panel nauczyciela v3</div>
+        <div class="small">Wersja szkolna z raportem wyników, automatycznym przejściem, pełnym ekranem i dźwiękami.</div>
+      </div>
+      <a href="index.html">Otwórz grę studenta</a>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>1. Zdania</h2>
+        <label for="sentencesInput">Jedno zdanie w jednej linii</label>
+        <textarea id="sentencesInput" placeholder="Np.
+I like learning English
+She goes to school every day
+We are reading a good book"></textarea>
+
+        <div class="row">
+          <div>
+            <label for="gameTitle">Tytuł gry</label>
+            <input id="gameTitle" type="text" placeholder="Np. English Sentences - Class 5A" />
+          </div>
+          <div>
+            <label for="difficulty">Poziom trudności</label>
+            <select id="difficulty">
+              <option value="easy">Łatwy</option>
+              <option value="medium" selected>Średni</option>
+              <option value="hard">Trudny</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="spawnRate">Czas pojawiania się liter</label>
+            <select id="spawnRate">
+              <option value="1200">Wolno</option>
+              <option value="900" selected>Normalnie</option>
+              <option value="650">Szybko</option>
+            </select>
+          </div>
+          <div>
+            <label for="timerSeconds">Timer na zdanie</label>
+            <select id="timerSeconds">
+              <option value="0">Bez timera</option>
+              <option value="30">30 sekund</option>
+              <option value="45" selected>45 sekund</option>
+              <option value="60">60 sekund</option>
+              <option value="90">90 sekund</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="maxMistakes">Maksymalna liczba błędów</label>
+            <select id="maxMistakes">
+              <option value="0">Bez limitu</option>
+              <option value="3">3</option>
+              <option value="5" selected>5</option>
+              <option value="10">10</option>
+            </select>
+          </div>
+          <div>
+            <label for="randomOrder">Kolejność zdań</label>
+            <select id="randomOrder">
+              <option value="false" selected>Po kolei</option>
+              <option value="true">Losowo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="allowHint">Podpowiedź</label>
+            <select id="allowHint">
+              <option value="true" selected>Włączona</option>
+              <option value="false">Wyłączona</option>
+            </select>
+          </div>
+          <div>
+            <label for="allowSolution">Pokaż rozwiązanie</label>
+            <select id="allowSolution">
+              <option value="true">Włączone</option>
+              <option value="false" selected>Wyłączone</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="autoNextSeconds">Automatyczne przejście dalej</label>
+            <select id="autoNextSeconds">
+              <option value="0">Wyłączone</option>
+              <option value="2">Po 2 sekundach</option>
+              <option value="3" selected>Po 3 sekundach</option>
+              <option value="5">Po 5 sekundach</option>
+            </select>
+          </div>
+          <div>
+            <label for="soundEnabled">Dźwięki</label>
+            <select id="soundEnabled">
+              <option value="true" selected>Włączone</option>
+              <option value="false">Wyłączone</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="previewBtn">Podgląd danych</button>
+          <button class="success" id="downloadBtn">Pobierz sentences.json</button>
+          <button class="secondary" id="copyBtn">Kopiuj JSON</button>
+          <button class="secondary" id="importBtn">Wczytaj istniejący JSON</button>
+          <input type="file" id="importFile" accept=".json,application/json" style="display:none" />
+          <button class="warning" id="demoBtn">Wstaw przykładowe</button>
+          <button class="danger" id="clearBtn">Wyczyść</button>
+        </div>
+
+        <div class="message info" id="message">Wpisz zdania, ustaw parametry i pobierz plik JSON.</div>
+      </div>
+
+      <div class="card">
+        <h2>2. Podgląd</h2>
+        <div id="stats" class="small">Liczba zdań: 0</div>
+        <div style="margin-top:10px;">
+          <span class="pill">Raport końcowy</span>
+          <span class="pill">Auto next</span>
+          <span class="pill">Fullscreen</span>
+          <span class="pill">Dźwięki</span>
+          <span class="pill">Timer</span>
+          <span class="pill">Import/Export</span>
+        </div>
+        <div id="previewList" class="preview-list"></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h2>3. Podgląd pliku sentences.json</h2>
+      <textarea id="jsonOutput" class="json-output" readonly></textarea>
+    </div>
+  </div>
+
+  <script>
+    const sentencesInput = document.getElementById("sentencesInput");
+    const gameTitle = document.getElementById("gameTitle");
+    const difficulty = document.getElementById("difficulty");
+    const spawnRate = document.getElementById("spawnRate");
+    const timerSeconds = document.getElementById("timerSeconds");
+    const maxMistakes = document.getElementById("maxMistakes");
+    const randomOrder = document.getElementById("randomOrder");
+    const allowHint = document.getElementById("allowHint");
+    const allowSolution = document.getElementById("allowSolution");
+    const autoNextSeconds = document.getElementById("autoNextSeconds");
+    const soundEnabled = document.getElementById("soundEnabled");
+
+    const previewBtn = document.getElementById("previewBtn");
+    const downloadBtn = document.getElementById("downloadBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const importBtn = document.getElementById("importBtn");
+    const importFile = document.getElementById("importFile");
+    const demoBtn = document.getElementById("demoBtn");
+    const clearBtn = document.getElementById("clearBtn");
+
+    const jsonOutput = document.getElementById("jsonOutput");
+    const message = document.getElementById("message");
+    const previewList = document.getElementById("previewList");
+    const stats = document.getElementById("stats");
+
+    const demoSentences = [
+      "I like learning English",
+      "She goes to school every day",
+      "We are reading a good book",
+      "They play football after class",
+      "My friend is very helpful",
+      "This lesson is easy and fun"
+    ];
+
+    function setMessage(text, type = "info"){
+      message.textContent = text;
+      message.className = "message " + type;
+    }
+
+    function cleanSentences(lines){
+      return lines.map(line => line.trim()).filter(line => line.length > 0);
+    }
+
+    function escapeHtml(text){
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function renderPreview(sentences){
+      previewList.innerHTML = "";
+      stats.textContent = "Liczba zdań: " + sentences.length;
+
+      if(sentences.length === 0){
+        previewList.innerHTML = '<div class="small">Brak zdań do podglądu.</div>';
+        return;
+      }
+
+      sentences.forEach((sentence, index) => {
+        const item = document.createElement("div");
+        item.className = "sentence-item";
+        item.innerHTML = `<strong>${index + 1}.</strong> ${escapeHtml(sentence)}`;
+        previewList.appendChild(item);
+      });
+    }
+
+    function buildData(){
+      const sentences = cleanSentences(sentencesInput.value.split("\n"));
+
+      if(sentences.length === 0){
+        setMessage("Wpisz przynajmniej jedno zdanie.", "err");
+        jsonOutput.value = "";
+        renderPreview([]);
+        return null;
+      }
+
+      const data = {
+        title: gameTitle.value.trim() || "English Sentence Builder",
+        settings: {
+          difficulty: difficulty.value,
+          spawnRate: Number(spawnRate.value),
+          timerSeconds: Number(timerSeconds.value),
+          maxMistakes: Number(maxMistakes.value),
+          randomOrder: randomOrder.value === "true",
+          allowHint: allowHint.value === "true",
+          allowSolution: allowSolution.value === "true",
+          autoNextSeconds: Number(autoNextSeconds.value),
+          soundEnabled: soundEnabled.value === "true"
+        },
+        sentences
+      };
+
+      renderPreview(sentences);
+      jsonOutput.value = JSON.stringify(data, null, 2);
+      setMessage("Dane JSON zostały przygotowane.", "ok");
+      return data;
+    }
+
+    function fillFormFromData(data){
+      const safeTitle = typeof data.title === "string" ? data.title : "English Sentence Builder";
+      const safeSettings = data.settings || {};
+      const safeSentences = Array.isArray(data.sentences) ? data.sentences : [];
+
+      gameTitle.value = safeTitle;
+      difficulty.value = safeSettings.difficulty || "medium";
+      spawnRate.value = String(safeSettings.spawnRate || 900);
+      timerSeconds.value = String(safeSettings.timerSeconds ?? 45);
+      maxMistakes.value = String(safeSettings.maxMistakes ?? 5);
+      randomOrder.value = String(!!safeSettings.randomOrder);
+      allowHint.value = String(safeSettings.allowHint ?? true);
+      allowSolution.value = String(safeSettings.allowSolution ?? false);
+      autoNextSeconds.value = String(safeSettings.autoNextSeconds ?? 3);
+      soundEnabled.value = String(safeSettings.soundEnabled ?? true);
+
+      sentencesInput.value = safeSentences.join("\n");
+      renderPreview(safeSentences);
+      jsonOutput.value = JSON.stringify({
+        title: safeTitle,
+        settings: {
+          difficulty: difficulty.value,
+          spawnRate: Number(spawnRate.value),
+          timerSeconds: Number(timerSeconds.value),
+          maxMistakes: Number(maxMistakes.value),
+          randomOrder: randomOrder.value === "true",
+          allowHint: allowHint.value === "true",
+          allowSolution: allowSolution.value === "true",
+          autoNextSeconds: Number(autoNextSeconds.value),
+          soundEnabled: soundEnabled.value === "true"
+        },
+        sentences: safeSentences
+      }, null, 2);
+    }
+
+    function downloadJsonFile(filename, content){
+      const blob = new Blob([content], { type: "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    async function copyJson(){
+      const value = jsonOutput.value.trim();
+      if(!value){
+        setMessage("Najpierw przygotuj JSON.", "err");
+        return;
+      }
+
+      try{
+        await navigator.clipboard.writeText(value);
+        setMessage("JSON skopiowany do schowka.", "ok");
+      }catch{
+        jsonOutput.select();
+        document.execCommand("copy");
+        setMessage("JSON skopiowany do schowka.", "ok");
+      }
+    }
+
+    previewBtn.addEventListener("click", buildData);
+
+    downloadBtn.addEventListener("click", () => {
+      const data = buildData();
+      if(!data) return;
+      downloadJsonFile("sentences.json", JSON.stringify(data, null, 2));
+      setMessage("Pobrano plik sentences.json.", "ok");
+    });
+
+    copyBtn.addEventListener("click", copyJson);
+
+    importBtn.addEventListener("click", () => importFile.click());
+
+    importFile.addEventListener("change", async (event) => {
+      const file = event.target.files[0];
+      if(!file) return;
+
+      try{
+        const text = await file.text();
+        const data = JSON.parse(text);
+
+        if(!data || !Array.isArray(data.sentences)){
+          throw new Error("Niepoprawny format JSON.");
+        }
+
+        fillFormFromData(data);
+        setMessage("Wczytano plik JSON.", "ok");
+      }catch(error){
+        console.error(error);
+        setMessage("Nie udało się wczytać pliku JSON.", "err");
+      }finally{
+        importFile.value = "";
+      }
+    });
+
+    demoBtn.addEventListener("click", () => {
+      const data = {
+        title: "English Sentences - Demo",
+        settings: {
+          difficulty: "medium",
+          spawnRate: 900,
+          timerSeconds: 45,
+          maxMistakes: 5,
+          randomOrder: false,
+          allowHint: true,
+          allowSolution: false,
+          autoNextSeconds: 3,
+          soundEnabled: true
+        },
+        sentences: demoSentences
+      };
+      fillFormFromData(data);
+      setMessage("Wstawiono przykładowe dane.", "info");
+    });
+
+    clearBtn.addEventListener("click", () => {
+      gameTitle.value = "";
+      difficulty.value = "medium";
+      spawnRate.value = "900";
+      timerSeconds.value = "45";
+      maxMistakes.value = "5";
+      randomOrder.value = "false";
+      allowHint.value = "true";
+      allowSolution.value = "false";
+      autoNextSeconds.value = "3";
+      soundEnabled.value = "true";
+      sentencesInput.value = "";
+      jsonOutput.value = "";
+      renderPreview([]);
+      setMessage("Wyczyszczono formularz.", "info");
+    });
+
+    (function init(){
+      demoBtn.click();
+    })();
+  </script>
+</body>
+</html>
