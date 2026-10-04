@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>teacher.html - Panel nauczyciela v3.1</title>
+  <title>teacher.html - Panel nauczyciela premium/final+</title>
   <style>
     :root{
       --bg:#0f172a;
@@ -25,7 +25,7 @@
       min-height:100vh;
     }
     .container{
-      max-width:1200px;
+      max-width:1380px;
       margin:0 auto;
       padding:20px;
     }
@@ -54,9 +54,9 @@
       grid-template-columns:1fr;
       gap:16px;
     }
-    @media (min-width:980px){
+    @media (min-width:1100px){
       .grid{
-        grid-template-columns:1.15fr .85fr;
+        grid-template-columns:1fr 1fr;
       }
     }
     .card{
@@ -72,7 +72,7 @@
       margin-bottom:8px;
       font-weight:bold;
     }
-    textarea, input, select{
+    input, textarea, select{
       width:100%;
       border-radius:12px;
       border:1px solid var(--border);
@@ -82,7 +82,7 @@
       font-size:15px;
     }
     textarea{
-      min-height:260px;
+      min-height:180px;
       resize:vertical;
       line-height:1.5;
     }
@@ -92,7 +92,7 @@
       gap:12px;
       margin-top:12px;
     }
-    @media (min-width:700px){
+    @media (min-width:760px){
       .row{
         grid-template-columns:1fr 1fr;
       }
@@ -129,19 +129,51 @@
       font-size:14px;
       line-height:1.6;
     }
-    .sentence-item{
+    .json-output{
+      min-height:300px;
+      font-family:Consolas, monospace;
+    }
+    .note{
+      margin-top:12px;
+      padding:12px;
+      border-radius:12px;
+      background:rgba(245,158,11,.10);
+      border:1px solid rgba(245,158,11,.20);
+      color:#fde68a;
+    }
+    .set-list{
+      display:grid;
+      gap:10px;
+      max-height:560px;
+      overflow:auto;
+      margin-top:10px;
+    }
+    .set-item{
       background:rgba(255,255,255,.03);
       border:1px solid rgba(255,255,255,.06);
-      border-radius:10px;
-      padding:10px 12px;
+      border-radius:12px;
+      padding:12px;
+    }
+    .set-header{
+      display:grid;
+      grid-template-columns:1fr 1fr auto auto;
+      gap:8px;
       margin-bottom:10px;
     }
-    .preview-list{
-      margin-top:12px;
+    @media (max-width:900px){
+      .set-header{
+        grid-template-columns:1fr;
+      }
     }
-    .json-output{
-      min-height:240px;
-      font-family:Consolas, monospace;
+    .set-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:8px;
+    }
+    .set-sentences{
+      width:100%;
+      min-height:120px;
     }
     .pill{
       display:inline-block;
@@ -154,44 +186,26 @@
       margin-right:8px;
       margin-bottom:8px;
     }
-    .note{
-      margin-top:12px;
-      padding:12px;
-      border-radius:12px;
-      background:rgba(245,158,11,.10);
-      border:1px solid rgba(245,158,11,.20);
-      color:#fde68a;
-    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="topbar">
       <div>
-        <div class="title">Panel nauczyciela v3.1</div>
-        <div class="small">Tryb: po kliknięciu poprawnej litery odkrywają się wszystkie takie litery w zdaniu. Obsługa polskich znaków.</div>
+        <div class="title">Panel nauczyciela premium/final+</div>
+        <div class="small">Wiele zestawów klas w jednym pliku JSON. Uczeń wybiera zestaw na ekranie startowym.</div>
       </div>
       <a href="index.html">Otwórz grę studenta</a>
     </div>
 
     <div class="grid">
       <div class="card">
-        <h2>1. Zdania</h2>
-        <label for="sentencesInput">Jedno zdanie w jednej linii</label>
-        <textarea id="sentencesInput" placeholder="Np.
-Zażółć gęślą jaźń
-Pójdę jutro do szkoły
-I like learning English"></textarea>
-
-        <div class="note small">
-          W tej wersji uczeń nie układa zdania po kolei.  
-          Kliknięcie poprawnej litery odsłania wszystkie takie same litery w całym zdaniu.
-        </div>
+        <h2>1. Ustawienia globalne gry</h2>
 
         <div class="row">
           <div>
             <label for="gameTitle">Tytuł gry</label>
-            <input id="gameTitle" type="text" placeholder="Np. Odkrywanie liter - Klasa 5A" />
+            <input id="gameTitle" type="text" placeholder="Np. Odkrywanie liter - Szkoła Podstawowa" />
           </div>
           <div>
             <label for="difficulty">Poziom trudności</label>
@@ -245,23 +259,6 @@ I like learning English"></textarea>
 
         <div class="row">
           <div>
-            <label for="allowHint">Podpowiedź</label>
-            <select id="allowHint">
-              <option value="true" selected>Włączona</option>
-              <option value="false">Wyłączona</option>
-            </select>
-          </div>
-          <div>
-            <label for="allowSolution">Pokaż rozwiązanie</label>
-            <select id="allowSolution">
-              <option value="true">Włączone</option>
-              <option value="false" selected>Wyłączone</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="row">
-          <div>
             <label for="autoNextSeconds">Automatyczne przejście dalej</label>
             <select id="autoNextSeconds">
               <option value="0">Wyłączone</option>
@@ -279,116 +276,300 @@ I like learning English"></textarea>
           </div>
         </div>
 
-        <div class="actions">
-          <button class="primary" id="previewBtn">Podgląd danych</button>
-          <button class="success" id="downloadBtn">Pobierz sentences.json</button>
-          <button class="secondary" id="copyBtn">Kopiuj JSON</button>
-          <button class="secondary" id="importBtn">Wczytaj istniejący JSON</button>
-          <input type="file" id="importFile" accept=".json,application/json" style="display:none" />
-          <button class="warning" id="demoBtn">Wstaw przykładowe</button>
-          <button class="danger" id="clearBtn">Wyczyść</button>
+        <div class="row">
+          <div>
+            <label for="allowHint">Podpowiedź</label>
+            <select id="allowHint">
+              <option value="true" selected>Włączona</option>
+              <option value="false">Wyłączona</option>
+            </select>
+          </div>
+          <div>
+            <label for="allowSolution">Pokaż rozwiązanie</label>
+            <select id="allowSolution">
+              <option value="true">Włączone</option>
+              <option value="false" selected>Wyłączone</option>
+            </select>
+          </div>
         </div>
 
-        <div class="message info" id="message">Wpisz zdania, ustaw parametry i pobierz plik JSON.</div>
+        <div class="row">
+          <div>
+            <label for="studentNameMode">Wymagane imię ucznia</label>
+            <select id="studentNameMode">
+              <option value="true" selected>Tak</option>
+              <option value="false">Nie</option>
+            </select>
+          </div>
+          <div>
+            <label for="showSetPicker">Uczeń wybiera zestaw na starcie</label>
+            <select id="showSetPicker">
+              <option value="true" selected>Tak</option>
+              <option value="false">Nie</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="note small">
+          W tej wersji możesz trzymać wiele klas lub zestawów zdań w jednym pliku <code>sentences.json</code>.
+        </div>
       </div>
 
       <div class="card">
-        <h2>2. Podgląd</h2>
-        <div id="stats" class="small">Liczba zdań: 0</div>
-        <div style="margin-top:10px;">
-          <span class="pill">Polskie litery</span>
-          <span class="pill">Odkrywanie wszystkich takich samych liter</span>
-          <span class="pill">Raport końcowy</span>
-          <span class="pill">Dźwięki</span>
-          <span class="pill">Timer</span>
+        <h2>2. Szybkie tworzenie nowego zestawu</h2>
+
+        <div class="row">
+          <div>
+            <label for="newSetId">ID zestawu</label>
+            <input id="newSetId" type="text" placeholder="Np. class5a" />
+          </div>
+          <div>
+            <label for="newSetName">Nazwa zestawu</label>
+            <input id="newSetName" type="text" placeholder="Np. Klasa 5A" />
+          </div>
         </div>
-        <div id="previewList" class="preview-list"></div>
+
+        <label for="newSetSentences" style="margin-top:12px;">Zdania nowego zestawu</label>
+        <textarea id="newSetSentences" placeholder="Jedno zdanie w jednej linii"></textarea>
+
+        <div class="actions">
+          <button class="primary" id="addSetBtn">Dodaj zestaw</button>
+          <button class="warning" id="loadDemoSetsBtn">Wstaw przykładowe zestawy</button>
+          <button class="danger" id="clearNewSetBtn">Wyczyść pola</button>
+        </div>
+
+        <div class="message info" id="message">Dodaj kilka zestawów i pobierz gotowy plik JSON.</div>
       </div>
     </div>
 
     <div class="card" style="margin-top:16px;">
-      <h2>3. Podgląd pliku sentences.json</h2>
+      <h2>3. Zestawy zdań</h2>
+      <div>
+        <span class="pill">Wiele klas</span>
+        <span class="pill">Wiele zestawów</span>
+        <span class="pill">Eksport jednego pliku JSON</span>
+      </div>
+
+      <div class="actions">
+        <button class="success" id="addEmptySetBtn">Dodaj pusty zestaw</button>
+        <button class="secondary" id="sortSetsBtn">Sortuj zestawy A-Z</button>
+        <button class="danger" id="clearSetsBtn">Usuń wszystkie zestawy</button>
+      </div>
+
+      <div id="setList" class="set-list"></div>
+      <div id="stats" class="small" style="margin-top:10px;">Liczba zestawów: 0</div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h2>4. Podgląd pliku JSON</h2>
       <textarea id="jsonOutput" class="json-output" readonly></textarea>
+
+      <div class="actions">
+        <button class="primary" id="previewBtn">Odśwież JSON</button>
+        <button class="success" id="downloadBtn">Pobierz sentences.json</button>
+        <button class="secondary" id="copyBtn">Kopiuj JSON</button>
+        <button class="secondary" id="importBtn">Wczytaj istniejący JSON</button>
+        <input type="file" id="importFile" accept=".json,application/json" style="display:none" />
+      </div>
     </div>
   </div>
 
   <script>
-    const sentencesInput = document.getElementById("sentencesInput");
+    const demoSets = [
+      {
+        id: "class5a",
+        name: "Klasa 5A",
+        sentences: [
+          "Zażółć gęślą jaźń",
+          "Pójdę jutro do szkoły",
+          "Mój żółw lubi śliwki"
+        ]
+      },
+      {
+        id: "english_basic",
+        name: "English Basic",
+        sentences: [
+          "I like apples",
+          "She is my best friend",
+          "We go to school every day"
+        ]
+      },
+      {
+        id: "school_daily",
+        name: "Szkoła i codzienność",
+        sentences: [
+          "Mam dziś matematykę",
+          "Po lekcjach idę do domu",
+          "My teacher is very kind"
+        ]
+      }
+    ];
+
     const gameTitle = document.getElementById("gameTitle");
     const difficulty = document.getElementById("difficulty");
     const spawnRate = document.getElementById("spawnRate");
     const timerSeconds = document.getElementById("timerSeconds");
     const maxMistakes = document.getElementById("maxMistakes");
     const randomOrder = document.getElementById("randomOrder");
-    const allowHint = document.getElementById("allowHint");
-    const allowSolution = document.getElementById("allowSolution");
     const autoNextSeconds = document.getElementById("autoNextSeconds");
     const soundEnabled = document.getElementById("soundEnabled");
+    const allowHint = document.getElementById("allowHint");
+    const allowSolution = document.getElementById("allowSolution");
+    const studentNameMode = document.getElementById("studentNameMode");
+    const showSetPicker = document.getElementById("showSetPicker");
 
+    const newSetId = document.getElementById("newSetId");
+    const newSetName = document.getElementById("newSetName");
+    const newSetSentences = document.getElementById("newSetSentences");
+
+    const addSetBtn = document.getElementById("addSetBtn");
+    const loadDemoSetsBtn = document.getElementById("loadDemoSetsBtn");
+    const clearNewSetBtn = document.getElementById("clearNewSetBtn");
+
+    const addEmptySetBtn = document.getElementById("addEmptySetBtn");
+    const sortSetsBtn = document.getElementById("sortSetsBtn");
+    const clearSetsBtn = document.getElementById("clearSetsBtn");
+
+    const setList = document.getElementById("setList");
+    const stats = document.getElementById("stats");
+    const jsonOutput = document.getElementById("jsonOutput");
     const previewBtn = document.getElementById("previewBtn");
     const downloadBtn = document.getElementById("downloadBtn");
     const copyBtn = document.getElementById("copyBtn");
     const importBtn = document.getElementById("importBtn");
     const importFile = document.getElementById("importFile");
-    const demoBtn = document.getElementById("demoBtn");
-    const clearBtn = document.getElementById("clearBtn");
-
-    const jsonOutput = document.getElementById("jsonOutput");
     const message = document.getElementById("message");
-    const previewList = document.getElementById("previewList");
-    const stats = document.getElementById("stats");
 
-    const demoSentences = [
-      "Zażółć gęślą jaźń",
-      "Pójdę jutro do szkoły",
-      "Mój żółw lubi śliwki",
-      "I like learning English",
-      "She goes to school every day"
-    ];
+    let sets = [];
 
     function setMessage(text, type = "info"){
       message.textContent = text;
       message.className = "message " + type;
     }
 
-    function cleanSentences(lines){
-      return lines.map(line => line.trim()).filter(line => line.length > 0);
+    function cleanSentence(text){
+      return String(text).trim();
     }
 
-    function escapeHtml(text){
-      const div = document.createElement("div");
-      div.textContent = text;
-      return div.innerHTML;
+    function sanitizeId(value){
+      return String(value)
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "_")
+        .replace(/[^a-z0-9_-]/g, "");
     }
 
-    function renderPreview(sentences){
-      previewList.innerHTML = "";
-      stats.textContent = "Liczba zdań: " + sentences.length;
+    function renderSets(){
+      setList.innerHTML = "";
 
-      if(sentences.length === 0){
-        previewList.innerHTML = '<div class="small">Brak zdań do podglądu.</div>';
-        return;
+      if(sets.length === 0){
+        setList.innerHTML = '<div class="small">Brak zestawów. Dodaj pierwszy zestaw.</div>';
       }
 
-      sentences.forEach((sentence, index) => {
-        const item = document.createElement("div");
-        item.className = "sentence-item";
-        item.innerHTML = `<strong>${index + 1}.</strong> ${escapeHtml(sentence)}`;
-        previewList.appendChild(item);
+      sets.forEach((set, index) => {
+        const box = document.createElement("div");
+        box.className = "set-item";
+
+        box.innerHTML = `
+          <div class="set-header">
+            <input type="text" value="${escapeHtmlAttr(set.id)}" placeholder="ID zestawu" data-field="id" data-index="${index}">
+            <input type="text" value="${escapeHtmlAttr(set.name)}" placeholder="Nazwa zestawu" data-field="name" data-index="${index}">
+            <button class="secondary" data-action="duplicate" data-index="${index}">Duplikuj</button>
+            <button class="danger" data-action="remove" data-index="${index}">Usuń</button>
+          </div>
+          <label>Zdania zestawu</label>
+          <textarea class="set-sentences" data-field="sentences" data-index="${index}">${escapeHtmlText(set.sentences.join("\n"))}</textarea>
+          <div class="set-actions">
+            <button class="secondary" data-action="up" data-index="${index}">Przesuń w górę</button>
+            <button class="secondary" data-action="down" data-index="${index}">Przesuń w dół</button>
+          </div>
+        `;
+
+        setList.appendChild(box);
+      });
+
+      bindSetEvents();
+      stats.textContent = "Liczba zestawów: " + sets.length;
+    }
+
+    function bindSetEvents(){
+      setList.querySelectorAll("[data-field='id']").forEach(input => {
+        input.addEventListener("input", e => {
+          const i = Number(e.target.dataset.index);
+          sets[i].id = sanitizeId(e.target.value);
+          updateJsonPreview();
+        });
+      });
+
+      setList.querySelectorAll("[data-field='name']").forEach(input => {
+        input.addEventListener("input", e => {
+          const i = Number(e.target.dataset.index);
+          sets[i].name = e.target.value;
+          updateJsonPreview();
+        });
+      });
+
+      setList.querySelectorAll("[data-field='sentences']").forEach(textarea => {
+        textarea.addEventListener("input", e => {
+          const i = Number(e.target.dataset.index);
+          sets[i].sentences = e.target.value.split("\n").map(cleanSentence).filter(Boolean);
+          updateJsonPreview();
+        });
+      });
+
+      setList.querySelectorAll("[data-action]").forEach(btn => {
+        btn.addEventListener("click", e => {
+          const action = e.target.dataset.action;
+          const i = Number(e.target.dataset.index);
+
+          if(action === "remove"){
+            sets.splice(i, 1);
+          } else if(action === "duplicate"){
+            sets.splice(i + 1, 0, JSON.parse(JSON.stringify(sets[i])));
+            sets[i + 1].id = sets[i + 1].id + "_copy";
+            sets[i + 1].name = sets[i + 1].name + " kopia";
+          } else if(action === "up" && i > 0){
+            [sets[i - 1], sets[i]] = [sets[i], sets[i - 1]];
+          } else if(action === "down" && i < sets.length - 1){
+            [sets[i + 1], sets[i]] = [sets[i], sets[i + 1]];
+          }
+
+          renderSets();
+          updateJsonPreview();
+        });
       });
     }
 
-    function buildData(){
-      const sentences = cleanSentences(sentencesInput.value.split("\n"));
+    function escapeHtmlAttr(text){
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
 
-      if(sentences.length === 0){
-        setMessage("Wpisz przynajmniej jedno zdanie.", "err");
-        jsonOutput.value = "";
-        renderPreview([]);
+    function escapeHtmlText(text){
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function getConfigData(){
+      const preparedSets = sets
+        .map(set => ({
+          id: sanitizeId(set.id),
+          name: String(set.name).trim(),
+          sentences: (set.sentences || []).map(cleanSentence).filter(Boolean)
+        }))
+        .filter(set => set.id && set.name && set.sentences.length > 0);
+
+      if(preparedSets.length === 0){
+        setMessage("Dodaj przynajmniej jeden poprawny zestaw.", "err");
         return null;
       }
 
-      const data = {
+      return {
         title: gameTitle.value.trim() || "Odkrywanie liter",
         settings: {
           difficulty: difficulty.value,
@@ -396,53 +577,60 @@ I like learning English"></textarea>
           timerSeconds: Number(timerSeconds.value),
           maxMistakes: Number(maxMistakes.value),
           randomOrder: randomOrder.value === "true",
+          autoNextSeconds: Number(autoNextSeconds.value),
+          soundEnabled: soundEnabled.value === "true",
           allowHint: allowHint.value === "true",
           allowSolution: allowSolution.value === "true",
-          autoNextSeconds: Number(autoNextSeconds.value),
-          soundEnabled: soundEnabled.value === "true"
+          studentNameMode: studentNameMode.value === "true",
+          showSetPicker: showSetPicker.value === "true"
         },
-        sentences
+        sets: preparedSets
       };
-
-      renderPreview(sentences);
-      jsonOutput.value = JSON.stringify(data, null, 2);
-      setMessage("Dane JSON zostały przygotowane.", "ok");
-      return data;
     }
 
-    function fillFormFromData(data){
-      const safeTitle = typeof data.title === "string" ? data.title : "Odkrywanie liter";
-      const safeSettings = data.settings || {};
-      const safeSentences = Array.isArray(data.sentences) ? data.sentences : [];
+    function updateJsonPreview(){
+      const data = getConfigData();
+      if(!data){
+        jsonOutput.value = "";
+        return;
+      }
+      jsonOutput.value = JSON.stringify(data, null, 2);
+    }
 
-      gameTitle.value = safeTitle;
-      difficulty.value = safeSettings.difficulty || "medium";
-      spawnRate.value = String(safeSettings.spawnRate || 900);
-      timerSeconds.value = String(safeSettings.timerSeconds ?? 45);
-      maxMistakes.value = String(safeSettings.maxMistakes ?? 5);
-      randomOrder.value = String(!!safeSettings.randomOrder);
-      allowHint.value = String(safeSettings.allowHint ?? true);
-      allowSolution.value = String(safeSettings.allowSolution ?? false);
-      autoNextSeconds.value = String(safeSettings.autoNextSeconds ?? 3);
-      soundEnabled.value = String(safeSettings.soundEnabled ?? true);
+    function addSet(id, name, sentences){
+      sets.push({
+        id: sanitizeId(id),
+        name: String(name).trim(),
+        sentences: (sentences || []).map(cleanSentence).filter(Boolean)
+      });
+      renderSets();
+      updateJsonPreview();
+    }
 
-      sentencesInput.value = safeSentences.join("\n");
-      renderPreview(safeSentences);
-      jsonOutput.value = JSON.stringify({
-        title: safeTitle,
-        settings: {
-          difficulty: difficulty.value,
-          spawnRate: Number(spawnRate.value),
-          timerSeconds: Number(timerSeconds.value),
-          maxMistakes: Number(maxMistakes.value),
-          randomOrder: randomOrder.value === "true",
-          allowHint: allowHint.value === "true",
-          allowSolution: allowSolution.value === "true",
-          autoNextSeconds: Number(autoNextSeconds.value),
-          soundEnabled: soundEnabled.value === "true"
-        },
-        sentences: safeSentences
-      }, null, 2);
+    function applyData(data){
+      gameTitle.value = data.title || "Odkrywanie liter";
+
+      const s = data.settings || {};
+      difficulty.value = s.difficulty || "medium";
+      spawnRate.value = String(s.spawnRate ?? 900);
+      timerSeconds.value = String(s.timerSeconds ?? 45);
+      maxMistakes.value = String(s.maxMistakes ?? 5);
+      randomOrder.value = String(!!s.randomOrder);
+      autoNextSeconds.value = String(s.autoNextSeconds ?? 3);
+      soundEnabled.value = String(s.soundEnabled ?? true);
+      allowHint.value = String(s.allowHint ?? true);
+      allowSolution.value = String(s.allowSolution ?? false);
+      studentNameMode.value = String(s.studentNameMode ?? true);
+      showSetPicker.value = String(s.showSetPicker ?? true);
+
+      sets = Array.isArray(data.sets) ? data.sets.map(set => ({
+        id: sanitizeId(set.id || ""),
+        name: String(set.name || ""),
+        sentences: Array.isArray(set.sentences) ? set.sentences.map(cleanSentence).filter(Boolean) : []
+      })) : [];
+
+      renderSets();
+      updateJsonPreview();
     }
 
     function downloadJsonFile(filename, content){
@@ -458,14 +646,11 @@ I like learning English"></textarea>
     }
 
     async function copyJson(){
-      const value = jsonOutput.value.trim();
-      if(!value){
-        setMessage("Najpierw przygotuj JSON.", "err");
-        return;
-      }
+      if(!jsonOutput.value.trim()) updateJsonPreview();
+      if(!jsonOutput.value.trim()) return;
 
       try{
-        await navigator.clipboard.writeText(value);
+        await navigator.clipboard.writeText(jsonOutput.value);
         setMessage("JSON skopiowany do schowka.", "ok");
       }catch{
         jsonOutput.select();
@@ -474,12 +659,63 @@ I like learning English"></textarea>
       }
     }
 
-    previewBtn.addEventListener("click", buildData);
+    addSetBtn.addEventListener("click", () => {
+      const id = newSetId.value;
+      const name = newSetName.value;
+      const sentences = newSetSentences.value.split("\n");
+
+      if(!sanitizeId(id) || !String(name).trim()){
+        setMessage("Podaj ID i nazwę zestawu.", "err");
+        return;
+      }
+
+      addSet(id, name, sentences);
+      setMessage("Dodano zestaw.", "ok");
+    });
+
+    loadDemoSetsBtn.addEventListener("click", () => {
+      sets = JSON.parse(JSON.stringify(demoSets));
+      renderSets();
+      updateJsonPreview();
+      setMessage("Wstawiono przykładowe zestawy.", "ok");
+    });
+
+    clearNewSetBtn.addEventListener("click", () => {
+      newSetId.value = "";
+      newSetName.value = "";
+      newSetSentences.value = "";
+      setMessage("Wyczyszczono pola nowego zestawu.", "info");
+    });
+
+    addEmptySetBtn.addEventListener("click", () => {
+      addSet("nowy_zestaw", "Nowy zestaw", []);
+    });
+
+    sortSetsBtn.addEventListener("click", () => {
+      sets.sort((a, b) => String(a.name).localeCompare(String(b.name), "pl"));
+      renderSets();
+      updateJsonPreview();
+      setMessage("Posortowano zestawy A-Z.", "ok");
+    });
+
+    clearSetsBtn.addEventListener("click", () => {
+      sets = [];
+      renderSets();
+      updateJsonPreview();
+      setMessage("Usunięto wszystkie zestawy.", "info");
+    });
+
+    previewBtn.addEventListener("click", () => {
+      updateJsonPreview();
+      if(jsonOutput.value.trim()){
+        setMessage("Odświeżono podgląd JSON.", "ok");
+      }
+    });
 
     downloadBtn.addEventListener("click", () => {
-      const data = buildData();
-      if(!data) return;
-      downloadJsonFile("sentences.json", JSON.stringify(data, null, 2));
+      updateJsonPreview();
+      if(!jsonOutput.value.trim()) return;
+      downloadJsonFile("sentences.json", jsonOutput.value);
       setMessage("Pobrano plik sentences.json.", "ok");
     });
 
@@ -495,11 +731,11 @@ I like learning English"></textarea>
         const text = await file.text();
         const data = JSON.parse(text);
 
-        if(!data || !Array.isArray(data.sentences)){
-          throw new Error("Niepoprawny format JSON.");
+        if(!data || !Array.isArray(data.sets)){
+          throw new Error("Niepoprawny plik JSON.");
         }
 
-        fillFormFromData(data);
+        applyData(data);
         setMessage("Wczytano plik JSON.", "ok");
       }catch(error){
         console.error(error);
@@ -509,45 +745,24 @@ I like learning English"></textarea>
       }
     });
 
-    demoBtn.addEventListener("click", () => {
-      const data = {
-        title: "Odkrywanie liter - Demo",
+    (function init(){
+      applyData({
+        title: "Odkrywanie liter - Szkoła",
         settings: {
           difficulty: "medium",
           spawnRate: 900,
           timerSeconds: 45,
           maxMistakes: 5,
           randomOrder: false,
+          autoNextSeconds: 3,
+          soundEnabled: true,
           allowHint: true,
           allowSolution: false,
-          autoNextSeconds: 3,
-          soundEnabled: true
+          studentNameMode: true,
+          showSetPicker: true
         },
-        sentences: demoSentences
-      };
-      fillFormFromData(data);
-      setMessage("Wstawiono przykładowe dane.", "info");
-    });
-
-    clearBtn.addEventListener("click", () => {
-      gameTitle.value = "";
-      difficulty.value = "medium";
-      spawnRate.value = "900";
-      timerSeconds.value = "45";
-      maxMistakes.value = "5";
-      randomOrder.value = "false";
-      allowHint.value = "true";
-      allowSolution.value = "false";
-      autoNextSeconds.value = "3";
-      soundEnabled.value = "true";
-      sentencesInput.value = "";
-      jsonOutput.value = "";
-      renderPreview([]);
-      setMessage("Wyczyszczono formularz.", "info");
-    });
-
-    (function init(){
-      demoBtn.click();
+        sets: demoSets
+      });
     })();
   </script>
 </body>
