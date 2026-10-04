@@ -1,5 +1,5 @@
 {
-  "title": "English Sentences - Class 5A",
+  "title": "English Sentences - Demo",
   "settings": {
     "difficulty": "medium",
     "spawnRate": 900,
@@ -12,11 +12,10 @@
     "soundEnabled": true
   },
   "sentences": [
-    "I like learning English",
-    "She goes to school every day",
-    "We are reading a good book",
-    "They play football after class",
-    "My friend is very helpful",
-    "This lesson is easy and fun"
+    "Wczoraj przeczytałem bardzo ciekawą książkę o przygodach w dżungli.",
+    "Gdy wróciliśmy ze szkoły, mama przygotowała pyszny obiad.",
+    "Nasza klasa chętnie bierze udział w szkolnych konkursach i zawodach sportowych.",
+    "Dlaczego dzisiaj nie wziąłeś do szkoły zeszytu do języka polskiego?",
+    "W słoneczny jesienny dzień wybraliśmy się na długi spacer po parku."
   ]
 }
